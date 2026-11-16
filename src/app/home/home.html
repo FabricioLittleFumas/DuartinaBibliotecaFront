@@ -1,0 +1,23 @@
+<div class="home-shell">
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow"><i class="pi pi-sparkles"></i> Seu próximo capítulo começa aqui</span>
+      <h1>Histórias que<br><em>abrem caminhos.</em></h1>
+      <p>Explore o acervo, conheça autores e encontre uma nova leitura para chamar de sua.</p>
+      <div class="hero-actions"><a class="button button-primary" routerLink="/livros">Explorar livros <i class="pi pi-arrow-right"></i></a><a class="button button-quiet" routerLink="/autores">Conhecer autores</a></div>
+      <div class="stats" *ngIf="loggedIn"><div><strong>{{ livros.length || '—' }}</strong><span>leituras em destaque</span></div><div><strong>{{ autores || '—' }}</strong><span>autores no catálogo</span></div></div>
+    </div>
+    <div class="hero-art" aria-label="Ilustração de livros em uma estante"><div class="sun"></div><div class="shelf shelf-one"><span></span><span></span><span></span><span></span></div><div class="shelf shelf-two"><span></span><span></span><span></span><span></span><span></span></div><div class="plant"><i></i><i></i><i></i></div><div class="art-note"><i class="pi pi-book"></i><span>Um mundo<br>em cada página</span></div></div>
+  </section>
+  <app-trilhas-leitura></app-trilhas-leitura>
+  <section class="featured" aria-labelledby="featured-title">
+    <div class="section-heading"><div><span class="eyebrow">Curadoria da biblioteca</span><h2 id="featured-title">Encontre sua próxima leitura</h2></div><a routerLink="/livros" class="text-link">Ver catálogo <i class="pi pi-arrow-up-right"></i></a></div>
+    <p class="login-note" *ngIf="!loggedIn">Entre na sua conta para consultar o acervo completo.</p>
+    <div class="book-grid" *ngIf="loggedIn && livros.length; else emptyState"><a class="book-card" *ngFor="let livro of livros" routerLink="/livros"><span class="book-cover"><i class="pi pi-book"></i></span><span class="book-info"><strong>{{ livro.titulo }}</strong><small>{{ nomesAutores(livro) }}</small></span></a></div>
+    <ng-template #emptyState><div class="empty-state" *ngIf="loggedIn"><i class="pi pi-book"></i><span>{{ carregando ? 'Carregando catálogo…' : 'O catálogo estará aqui assim que os livros forem cadastrados.' }}</span></div></ng-template>
+  </section>
+  <app-atalhos-rapidos *ngIf="loggedIn"></app-atalhos-rapidos>
+  <app-experiencia-leitura></app-experiencia-leitura>
+  <app-mapa-museu [obras]="todasObras" [autenticado]="loggedIn" [carregando]="carregando"></app-mapa-museu>
+  <section class="quote-band"><i class="pi pi-quote-left"></i><p>“A leitura é, provavelmente, uma outra maneira de estar em um lugar.”</p><span>— José Saramago</span></section>
+</div>

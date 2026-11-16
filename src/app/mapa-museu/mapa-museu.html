@@ -1,0 +1,74 @@
+<section class="mapa-secao" aria-labelledby="mapa-titulo">
+  <div class="mapa-cabecalho">
+    <div>
+      <span class="mapa-sobretitulo"><i class="pi pi-map"></i> VISITA VIRTUAL · DUARTINA, SP</span>
+      <h2 id="mapa-titulo">Caminhe entre histórias</h2>
+      <p>Explore a sala, percorra o corredor e escolha uma obra para conhecer melhor.</p>
+    </div>
+    <span class="mapa-legenda"><i class="pi pi-compass"></i> Clique no corredor para caminhar</span>
+  </div>
+
+  <div class="mapa-janela" [class.trecho-entrada]="trechoAtual === 0" [class.trecho-fundo]="trechoAtual === 2" [class.zoom-entrada]="trechoAtual === 0" [class.zoom-memoria]="trechoAtual === 1" [class.zoom-fundo]="trechoAtual === 2">
+    <div class="sala-cena" aria-label="Sala de biblioteca com corredor central e duas estantes em cada lado">
+      <div class="ambiente-sala">
+      <div class="parede-fundo"><span class="placa-sala"><i class="pi pi-book"></i> SALA DE LEITURA <small>DUARTINA · SP</small></span><span class="janela-sala"><i></i><i></i></span></div>
+      <div class="parede-lateral parede-esquerda"><span>MEMÓRIA &amp; LITERATURA</span></div>
+      <div class="parede-lateral parede-direita"><span>ACERVO DA COMUNIDADE</span></div>
+      <div class="piso-sala"><div class="assoalho"></div></div>
+
+      <div class="lado-estantes lado-esquerdo" aria-label="Duas estantes do lado esquerdo">
+        <div class="estante estante-esquerda" aria-label="Primeira estante à esquerda">
+          <div class="estante-topo"><i class="pi pi-book"></i><span>MEMÓRIA LOCAL</span></div>
+          <div class="prateleira" *ngFor="let nivel of niveisEstante"><button *ngFor="let obra of obrasDaEstante; let i = index" class="lombada" type="button" [ngClass]="'cor-' + (i % 6)" (click)="abrirObra(obra)" [attr.aria-label]="'Ver obra ' + obra.titulo"><span>{{ obra.titulo }}</span><i class="pi pi-book"></i></button><span class="prateleira-base"></span></div>
+          <div class="estante-vazia" *ngIf="autenticado && !carregando && !obrasDaEstante.length">Aguardando obras do acervo.</div><div class="estante-portas"></div>
+        </div>
+        <div class="estante estante-esquerda estante-secundaria" aria-label="Segunda estante à esquerda">
+          <div class="estante-topo"><i class="pi pi-book"></i><span>VOZES E AUTORES</span></div>
+          <div class="prateleira" *ngFor="let nivel of niveisEstante"><button *ngFor="let obra of obrasDaEstante; let i = index" class="lombada" type="button" [ngClass]="'cor-' + ((i + 2) % 6)" (click)="abrirObra(obra)" [attr.aria-label]="'Ver obra ' + obra.titulo"><span>{{ obra.titulo }}</span><i class="pi pi-book"></i></button><span class="prateleira-base"></span></div>
+          <div class="estante-vazia" *ngIf="autenticado && !carregando && !obrasDaEstante.length">Aguardando obras do acervo.</div><div class="estante-portas"></div>
+        </div>
+      </div>
+
+      <div class="corredor" role="group" aria-label="Corredor central. Selecione um trecho para caminhar pela sala.">
+        <span class="linha-perspectiva linha-1"></span><span class="linha-perspectiva linha-2"></span>
+        <div class="mensagem-caminho"><i class="pi pi-map-marker"></i><span>{{ trechos[trechoAtual].descricao }}</span></div>
+      </div>
+
+      <div class="lado-estantes lado-direito" aria-label="Duas estantes do lado direito">
+        <div class="estante estante-direita" aria-label="Primeira estante à direita">
+          <div class="estante-topo"><i class="pi pi-bookmark"></i><span>ACERVO MUNICIPAL</span></div>
+          <div class="prateleira" *ngFor="let nivel of niveisEstante"><button *ngFor="let obra of obrasDaEstante; let i = index" class="lombada" type="button" [ngClass]="'cor-' + ((i + 3) % 6)" (click)="abrirObra(obra)" [attr.aria-label]="'Ver obra ' + obra.titulo"><span>{{ obra.titulo }}</span><i class="pi pi-book"></i></button><span class="prateleira-base"></span></div>
+          <div class="estante-vazia" *ngIf="autenticado && !carregando && !obrasDaEstante.length">Aguardando obras do acervo.</div><div class="estante-portas"></div>
+        </div>
+        <div class="estante estante-direita estante-secundaria" aria-label="Segunda estante à direita">
+          <div class="estante-topo"><i class="pi pi-bookmark"></i><span>LEITURAS DA CIDADE</span></div>
+          <div class="prateleira" *ngFor="let nivel of niveisEstante"><button *ngFor="let obra of obrasDaEstante; let i = index" class="lombada" type="button" [ngClass]="'cor-' + ((i + 5) % 6)" (click)="abrirObra(obra)" [attr.aria-label]="'Ver obra ' + obra.titulo"><span>{{ obra.titulo }}</span><i class="pi pi-book"></i></button><span class="prateleira-base"></span></div>
+          <div class="estante-vazia" *ngIf="autenticado && !carregando && !obrasDaEstante.length">Aguardando obras do acervo.</div><div class="estante-portas"></div>
+        </div>
+      </div>
+      </div>
+
+      <div class="linha-tempo" role="group" aria-label="Linha do tempo da visita. Clique ou use a roda do mouse para caminhar" (wheel)="rolarLinhaDoTempo($event)">
+        <span class="linha-tempo-trilho"><i [style.width.%]="trechoAtual * 50"></i></span>
+        <button *ngFor="let trecho of trechos; let i = index" type="button" class="linha-tempo-ponto" [class.ativo]="trechoAtual === i" (click)="caminhar(i)" [attr.aria-pressed]="trechoAtual === i" [attr.aria-label]="'Ir para ' + trecho.nome"><i class="pi" [ngClass]="i < trechoAtual ? 'pi-check' : 'pi-arrow-up'"></i><span>{{ trecho.nome }}</span></button>
+      </div>
+
+      <div class="mapa-ajuda"><i class="pi pi-info-circle"></i> <span>Capas ilustrativas · toque em uma lombada para ver os dados da obra</span></div>
+    </div>
+    <div class="controles-mapa" aria-label="Controles da visita virtual">
+      <button type="button" (click)="caminhar(trechoAtual - 1)" [disabled]="trechoAtual === 0" aria-label="Voltar um trecho"><i class="pi pi-arrow-left"></i></button>
+      <span><i class="pi pi-map-marker"></i> {{ trechos[trechoAtual].nome }}</span>
+      <button type="button" (click)="caminhar(trechoAtual + 1)" [disabled]="trechoAtual === trechos.length - 1" aria-label="Avançar um trecho"><i class="pi pi-arrow-right"></i></button>
+    </div>
+    <div class="acesso-mapa" *ngIf="!autenticado"><i class="pi pi-lock"></i><span>Entre para abrir as obras do acervo municipal.</span><a routerLink="/home">Acesse o botão Entrar no menu</a></div>
+    <p class="estado-mapa" *ngIf="carregando"><i class="pi pi-spin pi-spinner"></i> Carregando obras do acervo…</p>
+  </div>
+
+  <div class="obra-modal-fundo" *ngIf="obraSelecionada as obra" (click)="fecharObra()">
+    <section class="obra-modal" role="dialog" aria-modal="true" [attr.aria-label]="'Detalhes da obra ' + obra.titulo" (click)="$event.stopPropagation()">
+      <button class="fechar-modal" type="button" (click)="fecharObra()" aria-label="Fechar detalhes"><i class="pi pi-times"></i></button>
+      <div class="modal-capa"><i class="pi pi-book"></i><span>BIBLIOTECA DUARTINA</span><b>{{ obra.titulo }}</b></div>
+      <div class="modal-detalhes"><span class="modal-sobretitulo">OBRA DO ACERVO</span><h3>{{ obra.titulo }}</h3><p class="modal-autor"><i class="pi pi-user"></i> {{ nomeAutores(obra) }}</p><dl><div *ngIf="obra.anoPublicacao"><dt>Ano de publicação</dt><dd>{{ obra.anoPublicacao }}</dd></div><div *ngIf="obra.isbn"><dt>ISBN</dt><dd>{{ obra.isbn }}</dd></div></dl><p class="nota-modal">Esta visualização apresenta os dados cadastrados no catálogo da Biblioteca Duartina.</p><button type="button" class="botao-modal" (click)="fecharObra()">Voltar à sala</button></div>
+    </section>
+  </div>
+</section>
